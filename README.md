@@ -65,7 +65,7 @@ research-agent fetch 'all:"crystal structure prediction"' --max 20 --enrich
 research-agent list
 ```
 
-Optional: set `SEMANTIC_SCHOLAR_API_KEY` for higher Semantic Scholar rate limits.
+Optional: set `SEMANTIC_SCHOLAR_API_KEY` for higher Semantic Scholar rate limits. Both APIs can be slow or rate-limited, so requests use a 90 s timeout and retry with exponential backoff.
 
 ## Development
 

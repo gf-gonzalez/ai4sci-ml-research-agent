@@ -7,6 +7,9 @@ research-agent list
 from __future__ import annotations
 
 import argparse
+import sys
+
+import httpx
 
 from research_agent.library import Library
 from research_agent.sources.arxiv import ArxivClient
@@ -15,10 +18,31 @@ from research_agent.sources.semantic_scholar import SemanticScholarClient
 
 def cmd_fetch(args: argparse.Namespace) -> None:
     library = Library(args.library)
-    papers = ArxivClient().search(args.query, max_results=args.max)
+    print("Searching arXiv (its API can take up to a minute)...")
+    try:
+        papers = ArxivClient().search(args.query, max_results=args.max)
+    except httpx.HTTPError as exc:
+        sys.exit(
+            f"arXiv request failed after retries: {exc.__class__.__name__}: {exc}\n"
+            "arXiv's API is often slow or busy. Wait a minute and try again, or lower --max."
+        )
+
     if args.enrich:
         s2 = SemanticScholarClient()
-        papers = [s2.enrich(p) for p in papers]
+        enriched, skipped = [], 0
+        for paper in papers:
+            try:
+                enriched.append(s2.enrich(paper))
+            except httpx.HTTPError:
+                enriched.append(paper)  # keep the paper, just without enrichment
+                skipped += 1
+        papers = enriched
+        if skipped:
+            print(
+                f"Semantic Scholar enrichment skipped for {skipped} papers (rate limit or "
+                "network). Set SEMANTIC_SCHOLAR_API_KEY or retry later."
+            )
+
     new = library.add(papers)
     print(f"Fetched {len(papers)} papers ({new} new). Library now has {len(library)} papers.")
 

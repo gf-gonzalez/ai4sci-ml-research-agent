@@ -9,11 +9,13 @@ from __future__ import annotations
 import re
 import time
 import xml.etree.ElementTree as ET
+from collections.abc import Callable
 from datetime import datetime
 
 import httpx
 
 from research_agent.models import Paper
+from research_agent.sources.http import DEFAULT_TIMEOUT, get_with_retries
 
 API_URL = "https://export.arxiv.org/api/query"
 NS = {"atom": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}
@@ -61,16 +63,31 @@ def parse_feed(xml_text: str) -> list[Paper]:
 
 
 class ArxivClient:
-    def __init__(self, client: httpx.Client | None = None, delay_s: float = REQUEST_DELAY_S):
-        self._client = client or httpx.Client(timeout=30.0)
+    def __init__(
+        self,
+        client: httpx.Client | None = None,
+        delay_s: float = REQUEST_DELAY_S,
+        retries: int = 3,
+        sleep: Callable[[float], None] = time.sleep,
+    ):
+        self._client = client or httpx.Client(timeout=DEFAULT_TIMEOUT)
         self._delay_s = delay_s
+        self._retries = retries
+        self._sleep = sleep
         self._last_request = 0.0
 
     def _get(self, params: dict) -> str:
         wait = self._delay_s - (time.monotonic() - self._last_request)
         if wait > 0:
-            time.sleep(wait)
-        response = self._client.get(API_URL, params=params)
+            self._sleep(wait)
+        response = get_with_retries(
+            self._client,
+            API_URL,
+            params=params,
+            retries=self._retries,
+            backoff_s=max(self._delay_s, 1.0),
+            sleep=self._sleep,
+        )
         self._last_request = time.monotonic()
         response.raise_for_status()
         return response.text
