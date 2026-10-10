@@ -45,10 +45,22 @@ def cmd_fetch(args: argparse.Namespace) -> None:
 
     new = library.add(papers)
     print(f"Fetched {len(papers)} papers ({new} new). Library now has {len(library)} papers.")
+    print(f"Saved to {library.path.resolve()}")
 
 
 def cmd_list(args: argparse.Namespace) -> None:
-    for paper in Library(args.library).all()[: args.limit]:
+    library = Library(args.library)
+    location = library.path.resolve()
+    if not library.path.exists():
+        sys.exit(
+            f"No library found at {location}\n"
+            "Run `fetch` first, from the same folder (the library path is relative to it)."
+        )
+    if len(library) == 0:
+        sys.exit(f"The library at {location} is empty.")
+
+    print(f"{len(library)} papers in {location}\n")
+    for paper in library.all()[: args.limit]:
         cites = f" · {paper.citation_count} citations" if paper.citation_count is not None else ""
         print(f"[{paper.arxiv_id}] {paper.title} — {paper.short_citation}{cites}")
 
