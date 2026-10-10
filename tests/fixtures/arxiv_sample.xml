@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:arxiv="http://arxiv.org/schemas/atom">
+  <title type="html">ArXiv Query: search_query=all:crystal</title>
+  <entry>
+    <id>http://arxiv.org/abs/2501.01234v2</id>
+    <published>2025-01-03T18:00:00Z</published>
+    <title>A Flow Matching Model for
+      Crystal Structure Prediction</title>
+    <summary>  We propose an equivariant flow matching model
+      for generating periodic crystal structures. </summary>
+    <author><name>Ada Lovelace</name></author>
+    <author><name>Alan Turing</name></author>
+    <link title="pdf" href="http://arxiv.org/pdf/2501.01234v2" rel="related" type="application/pdf"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cond-mat.mtrl-sci" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.09999v1</id>
+    <published>2024-12-20T12:00:00Z</published>
+    <title>Peptide Function Prediction with Multimodal Transformers</title>
+    <summary>A multimodal transformer for multilabel peptide classification.</summary>
+    <author><name>Rosalind Franklin</name></author>
+    <category term="q-bio.BM" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+</feed>
