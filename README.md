@@ -1,4 +1,4 @@
-[![CI](https://github.com/gf-gonzalez/ml-research-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/gf-gonzalez/ml-research-agent/actions/workflows/ci.yml)
+[![CI](https://github.com/gf-gonzalez/ai4sci-ml-research-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/gf-gonzalez/ai4sci-ml-research-agent/actions/workflows/ci.yml)
 
 # ML Research Agent
 
